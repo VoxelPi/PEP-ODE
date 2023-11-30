@@ -1,6 +1,7 @@
 #ifndef Newton_h
 #define Newton_h
 
+#include <iostream>
 #include "lapack_interface.h"
 #include "nonlinfunc.h"
 
@@ -20,11 +21,19 @@ namespace ASC_ode
         // cout << "|res| = " << L2Norm(res) << endl;
         func->EvaluateDeriv(x, fprime);
 
-        pep::bla::LapackLU tempLU(std::move(fprime));
-        fprime = std::move(tempLU).Inverse();
+        std::cout << "NEWTON ITERATION " << i << std::endl;
+        std::cout << "    x = " << x << std::endl;
+        std::cout << "    &x = " << &x << std::endl;
+        std::cout << "    f(x) = " << res << std::endl;
+        std::cout << "    &f(x) = " << &res << std::endl;
+        std::cout << "    df(x) = " << fprime << std::endl;
+
+        fprime =  pep::bla::LapackLU(fprime).Inverse();
+        std::cout << "    df^-1 = " << fprime << std::endl;
         // CalcInverse(fprime);
 
         x -= fprime*res;
+        std::cout << "    new x = " << x << std::endl;
         double err= L2Norm(res);
         if (callback)
           callback(i, err, x);
