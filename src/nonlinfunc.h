@@ -3,6 +3,7 @@
 
 #include <vector.h>
 #include <matrix.h>
+#include <memory>
 
 
 namespace ASC_ode
@@ -75,18 +76,18 @@ namespace ASC_ode
     
     size_t DimX() const override { return fa->DimX(); }
     size_t DimF() const override { return fa->DimF(); }
-    void Evaluate (VectorView<double> x, VectorView<double> f) const override
-    {
+
+    void Evaluate (VectorView<double> x, VectorView<double> f) const override {
       fa->Evaluate(x, f);
       f *= faca;
-      Vector<> tmp(DimF());
+      Vector<double> tmp(DimF());
       fb->Evaluate(x, tmp);
       f += facb*tmp;
     }
-    void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
-    {
+
+    void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override {
       fa->EvaluateDeriv(x, df);
-      Matrix<> tmp(DimF(), DimX());
+      Matrix<double, ColMajor> tmp(DimF(), DimX());
       tmp *= faca;
       fb->EvaluateDeriv(x, tmp);
       df += facb*tmp;
@@ -122,7 +123,7 @@ namespace ASC_ode
       f *= fac;
 
     }
-    void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+    void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override
     {
       fa->EvaluateDeriv(x, df);
       df *= fac;
@@ -150,17 +151,17 @@ namespace ASC_ode
     size_t DimF() const override { return fa->DimF(); }
     void Evaluate (VectorView<double> x, VectorView<double> f) const override
     {
-      Vector<> tmp(fb->DimF());
+      Vector<double> tmp(fb->DimF());
       fb->Evaluate (x, tmp);
       fa->Evaluate (tmp, f);
     }
-    void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+    void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override
     {
-      Vector<> tmp(fb->DimF());
+      Vector<double> tmp(fb->DimF());
       fb->Evaluate (x, tmp);
       
-      Matrix<> jaca(fa->DimF(), fa->DimX());
-      Matrix<> jacb(fb->DimF(), fb->DimX());
+      Matrix<double, ColMajor> jaca(fa->DimF(), fa->DimX());
+      Matrix<double, ColMajor> jacb(fb->DimF(), fb->DimX());
       
       fb->EvaluateDeriv(x, jacb);
       fa->EvaluateDeriv(tmp, jaca);
@@ -196,7 +197,7 @@ namespace ASC_ode
       f = 0.0;
       fa->Evaluate(x.Range(firstx, nextx), f.Range(firstf, nextf));
     }
-    void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+    void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override
     {
       df = 0;
       fa->EvaluateDeriv(x.Range(firstx, nextx),
@@ -220,7 +221,7 @@ namespace ASC_ode
       f = 0.0;
       f.Range(first, next) = x.Range(first, next);
     }
-    void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+    void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override
     {
       df = 0.0;
       df.Diag().Range(first, next) = 1;
