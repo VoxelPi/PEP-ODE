@@ -1,6 +1,7 @@
 #ifndef Newton_h
 #define Newton_h
 
+#include "lapack_interface.h"
 #include "nonlinfunc.h"
 
 namespace ASC_ode
@@ -10,17 +11,20 @@ namespace ASC_ode
                      double tol = 1e-10, int maxsteps = 10,
                      std::function<void(int,double,VectorView<double>)> callback = nullptr)
   {
-    Vector<> res(func->DimF());
-    Matrix<> fprime(func->DimF(), func->DimX());
+    Vector<double> res(func->DimF());
+    Matrix<double, ColMajor> fprime(func->DimF(), func->DimX());
 
     for (int i = 0; i < maxsteps; i++)
       {
         func->Evaluate(x, res);
         // cout << "|res| = " << L2Norm(res) << endl;
         func->EvaluateDeriv(x, fprime);
-        CalcInverse(fprime);
-        x -= fprime*res;
 
+        pep::bla::LapackLU tempLU(std::move(fprime));
+        fprime = std::move(tempLU).Inverse();
+        // CalcInverse(fprime);
+
+        x -= fprime*res;
         double err= L2Norm(res);
         if (callback)
           callback(i, err, x);

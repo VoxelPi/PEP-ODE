@@ -12,9 +12,9 @@ class RHS : public NonlinearFunction
   {
     f(0) = -x(0);
   }
-  void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+  void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override
   {
-    df(0) = -1;
+    df(0, 0) = -1.0;
   }
 };
 
@@ -23,8 +23,8 @@ int main()
 {
   double tend = 2*M_PI;
   int steps = 100;
-  Vector<> x { 1, };
-  Vector<> dx { 0. };
+  Vector<double> x { 1, };
+  Vector<double> dx { 0. };
   auto rhs = make_shared<RHS>();
   auto mass = make_shared<IdentityFunction>(1);
   SolveODE_Newmark(tend, steps, x, dx, rhs, mass,

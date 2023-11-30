@@ -19,7 +19,7 @@ class dLagrange : public NonlinearFunction
     f(2) = x(0)*x(0)+x(1)*x(1)-1;
     
   }
-  void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+  void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override
   {
     df(0,0) = 2*x(2);
     df(0,1) = 0;

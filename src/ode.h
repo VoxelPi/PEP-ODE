@@ -50,8 +50,8 @@ namespace ASC_ode
     double gamma = 0.5;
     double beta = 0.25;
 
-    Vector<> a(x.Size());
-    Vector<> v(x.Size());
+    Vector<double> a(x.Size());
+    Vector<double> v(x.Size());
 
     auto xold = make_shared<ConstantFunction>(x);
     auto vold = make_shared<ConstantFunction>(dx);
@@ -96,8 +96,8 @@ namespace ASC_ode
     double gamma = 0.5-alpham+alphaf;
     double beta = 0.25 * (1-alpham+alphaf)*(1-alpham+alphaf);
 
-    Vector<> a(x.Size());
-    Vector<> v(x.Size());
+    Vector<double> a(x.Size());
+    Vector<double> v(x.Size());
 
     auto xold = make_shared<ConstantFunction>(x);
     auto vold = make_shared<ConstantFunction>(dx);

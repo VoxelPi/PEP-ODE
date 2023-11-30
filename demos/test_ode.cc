@@ -15,11 +15,10 @@ class MassSpring : public NonlinearFunction
     f(1) = -x(0);
   }
   
-  void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
-  {
+  void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override {
     df = 0.0;
-    df(0,1) = 1;
-    df(1,0) = -1;
+    df(0, 1) = 1;
+    df(1, 0) = -1;
   }
 };
 
@@ -28,7 +27,7 @@ int main()
 {
   double tend = 4*M_PI;
   int steps = 100;
-  Vector<> y { 1, 0 };
+  Vector<double> y { 1, 0 };
   auto rhs = make_shared<MassSpring>();
   
   SolveODE_IE(tend, steps, y, rhs,
