@@ -1,13 +1,14 @@
 #ifndef NONLINFUNC_H
 #define NONLINFUNC_H
 
-#include <vector.hpp>
-#include <matrix.hpp>
+#include <vector.h>
+#include <matrix.h>
 
 
 namespace ASC_ode
 {
-  using namespace ngbla;
+  using namespace pep::bla;
+  using namespace std;
 
   class NonlinearFunction
   {
@@ -16,7 +17,7 @@ namespace ASC_ode
     virtual size_t DimX() const = 0;
     virtual size_t DimF() const = 0;
     virtual void Evaluate (VectorView<double> x, VectorView<double> f) const = 0;
-    virtual void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const = 0;
+    virtual void EvaluateDeriv (VectorView<double> x, MatrixView<double, pep::bla::ORDERING::ColMajor> df) const = 0;
   };
 
 
@@ -32,7 +33,7 @@ namespace ASC_ode
       f = x;
     }
     
-    void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+    void EvaluateDeriv (VectorView<double> x, MatrixView<double, ORDERING::ColMajor> df) const override
     {
       df = 0.0;
       df.Diag() = 1.0;
@@ -43,7 +44,7 @@ namespace ASC_ode
 
   class ConstantFunction : public NonlinearFunction
   {
-    Vector<> val;
+    Vector<double> val;
   public:
     ConstantFunction (VectorView<double> _val) : val(_val) { }
     void Set(VectorView<double> _val) { val = _val; }
@@ -54,7 +55,7 @@ namespace ASC_ode
     {
       f = val;
     }
-    void EvaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+    void EvaluateDeriv (VectorView<double> x, MatrixView<double, ORDERING::ColMajor> df) const override
     {
       df = 0.0;
     }
