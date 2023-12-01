@@ -14,6 +14,7 @@ namespace pep::ode {
         std::function<void(int,double,VectorView<double>)> callback = nullptr
     ) {
         Vector<double> res(func->DimF());
+        Vector<double> correction(func->DimF());
         Matrix<double, ColMajor> fprime(func->DimF(), func->DimX());
 
         for (int i = 0; i < maxsteps; i++) {
@@ -28,11 +29,17 @@ namespace pep::ode {
             std::cout << "    &f(x) = " << &res << std::endl;
             std::cout << "    df(x) = " << fprime << std::endl;
 
-            fprime =  pep::bla::LapackLU(fprime).Inverse();
-            std::cout << "    df^-1 = " << fprime << std::endl;
+            // fprime =  pep::bla::LapackLU(fprime).Inverse();
+            // std::cout << "    df^-1 = " << fprime << std::endl;
+            // x -= fprime*res;
+
+            // Compute df'^-1 * f(x)
+            correction = res;
+            pep::bla::LapackLU(fprime).Solve(correction);
+            x -= correction;
+
             // CalcInverse(fprime);
 
-            x -= fprime*res;
             std::cout << "    new x = " << x << std::endl;
             double err= L2Norm(res);
             if (callback) {
