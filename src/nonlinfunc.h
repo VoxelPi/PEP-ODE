@@ -6,8 +6,7 @@
 #include <memory>
 
 
-namespace ASC_ode
-{
+namespace pep::ode {
   using namespace pep::bla;
   using namespace std;
 

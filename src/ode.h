@@ -3,13 +3,10 @@
 
 #include <functional>
 #include <exception>
-// #include <calcinverse.hpp>
 
 #include "Newton.h"
 
-
-namespace ASC_ode
-{
+namespace pep::ode {
   
   // implicit Euler method for dy/dt = rhs(y)
   void SolveODE_IE(double tend, int steps,

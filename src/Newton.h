@@ -5,8 +5,7 @@
 #include "lapack_interface.h"
 #include "nonlinfunc.h"
 
-namespace ASC_ode
-{
+namespace pep::ode {
 
   void NewtonSolver (shared_ptr<NonlinearFunction> func, VectorView<double> x,
                      double tol = 1e-10, int maxsteps = 10,

@@ -5,11 +5,9 @@
 
 #include <nonlinfunc.h>
 #include <ode.h>
-
-using namespace ASC_ode;
-
 #include <vector.h>
 using namespace pep::bla;
+using namespace pep::ode;
 
 
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(ASC_ode)
+project(PEP_ODE)
 
 set (CMAKE_CXX_STANDARD 17)
 

@@ -1,7 +1,7 @@
 #include <nonlinfunc.h>
 #include <ode.h>
 
-using namespace ASC_ode;
+using namespace pep::ode;
 
 // the pendulum with a length constraint
 
