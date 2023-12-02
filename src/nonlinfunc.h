@@ -102,8 +102,8 @@ namespace pep::ode {
 
         void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override {
             fa->EvaluateDeriv(x, df);
+            df *= faca;
             Matrix<double, ColMajor> tmp(DimF(), DimX());
-            tmp *= faca;
             fb->EvaluateDeriv(x, tmp);
             df += facb*tmp;
         }
