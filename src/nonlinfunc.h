@@ -50,13 +50,13 @@ namespace pep::ode {
         public:
         ConstantFunction (VectorView<double> _val) : val(_val) {}
 
+        VectorView<double> Get() const {
+            return val.View();
+        }
+
         void Set(VectorView<double> _val) {
             val = _val;
         }
-
-        VectorView<double> Get() const {
-            return val.View();
-            }
 
         size_t DimX() const override {
             return val.Size();

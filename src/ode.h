@@ -1,6 +1,7 @@
 #ifndef ODE_h
 #define ODE_h
 
+#include <iostream>
 #include <functional>
 #include <exception>
 
@@ -10,21 +11,25 @@ namespace pep::ode {
     
     // implicit Euler method for dy/dt = rhs(y)
     void SolveODE_IE(
-        double tend, int steps,
-        VectorView<double> y, shared_ptr<NonlinearFunction> rhs,
+        double tend, 
+        int steps,
+        VectorView<double> y, 
+        shared_ptr<NonlinearFunction> rhs,
         std::function<void(double,VectorView<double>)> callback = nullptr
     ) {
         double dt = tend/steps;
         auto yold = make_shared<ConstantFunction>(y);
         auto ynew = make_shared<IdentityFunction>(y.Size());
-        auto equ = ynew-yold - dt * rhs;
+        auto equ = ynew - yold - dt * rhs;
 
         double t = 0;
         for (int i = 0; i < steps; i++) {
-            NewtonSolver (equ, y);
+            NewtonSolver(equ, y);
             yold->Set(y);
             t += dt;
-            if (callback) callback(t, y);
+            if (callback) {
+                callback(t, y);
+            }
         }
     }
 

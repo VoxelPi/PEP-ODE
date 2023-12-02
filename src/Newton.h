@@ -22,13 +22,6 @@ namespace pep::ode {
             // cout << "|res| = " << L2Norm(res) << endl;
             func->EvaluateDeriv(x, fprime);
 
-            std::cout << "NEWTON ITERATION " << i << std::endl;
-            std::cout << "    x = " << x << std::endl;
-            std::cout << "    &x = " << &x << std::endl;
-            std::cout << "    f(x) = " << res << std::endl;
-            std::cout << "    &f(x) = " << &res << std::endl;
-            std::cout << "    df(x) = " << fprime << std::endl;
-
             // fprime =  pep::bla::LapackLU(fprime).Inverse();
             // std::cout << "    df^-1 = " << fprime << std::endl;
             // x -= fprime*res;
@@ -38,9 +31,6 @@ namespace pep::ode {
             pep::bla::LapackLU(fprime).Solve(correction);
             x -= correction;
 
-            // CalcInverse(fprime);
-
-            std::cout << "    new x = " << x << std::endl;
             double err= L2Norm(res);
             if (callback) {
                 callback(i, err, x);
