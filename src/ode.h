@@ -17,7 +17,7 @@ namespace pep::ode {
         std::function<void(double, VectorView<double>)> callback = nullptr
     ) {
         double dt = t_end / steps;
-        Vector<double> res(y.Size());
+        Vector<double> res(rhs->DimF());
 
         double t = 0;
         for (int i = 0; i < steps; ++i) {
@@ -48,6 +48,38 @@ namespace pep::ode {
             NewtonSolver(equ, y);
             yold->Set(y);
             t += dt;
+            if (callback) {
+                callback(t, y);
+            }
+        }
+    }
+
+    // Crank Nicolson method for dy/dt = rhs(y)
+    void SolveODE_CN(
+        double tend, 
+        int steps,
+        VectorView<double> y, 
+        shared_ptr<NonlinearFunction> rhs,
+        std::function<void(double,VectorView<double>)> callback = nullptr
+    ) {
+        double dt = tend/steps;
+        Vector<double> res_old(rhs->DimF());
+        rhs->Evaluate(y, res_old);
+
+        auto yold = make_shared<ConstantFunction>(y);
+        auto fold = make_shared<ConstantFunction>(res_old);
+        auto ynew = make_shared<IdentityFunction>(y.Size());
+        auto equ = ynew - yold - (dt/2.0) * (fold + rhs);
+
+        double t = 0;
+        for (int i = 0; i < steps; i++) {
+            NewtonSolver(equ, y);
+
+            rhs->Evaluate(y, res_old);
+            fold->Set(res_old);
+            yold->Set(y);
+            t += dt;
+
             if (callback) {
                 callback(t, y);
             }
