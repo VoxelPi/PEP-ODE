@@ -30,8 +30,8 @@ class MassSpring : public NonlinearFunction {
 
 class ResistorCapacitor : public NonlinearFunction {
     public:
-    double R = 1; // Ohm
-    double C = 1; // Farad
+    double R = 1e3; // Ohm
+    double C = 1e-7; // Farad
 
     size_t DimX() const override {
         return 2;
@@ -58,7 +58,7 @@ int main() {
     // Mass-Spring, implicit euler.
     {
         double tend = 4*M_PI;
-        int steps = 100;
+        int steps = 50;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
@@ -74,7 +74,7 @@ int main() {
     // Mass-Spring, explicit euler.
     {
         double tend = 4*M_PI;
-        int steps = 100;
+        int steps = 50;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
@@ -87,10 +87,10 @@ int main() {
         output.close();
     }
 
-    // Mass-Spring, explicit euler.
+    // Mass-Spring, crank nicolson.
     {
         double tend = 4*M_PI;
-        int steps = 100;
+        int steps = 50;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
@@ -105,8 +105,8 @@ int main() {
 
     // Resistor-Capacitor, implicit euler.
     {
-        double tend = 4/100.0;
-        int steps = 100;
+        double tend = 4/10.0;
+        int steps = 1000;
         Vector<double> y { 0, 0 };
         auto rhs = make_shared<ResistorCapacitor>();
 
@@ -114,6 +114,38 @@ int main() {
         output.open ("implicit_rc.csv");
         output << "t,y[0],y[1]\n";
         SolveODE_IE(tend, steps, y, rhs, [&output](double t, VectorView<double> y) {
+            output << "" << t << "," << y(0) << "," << y(1) << std::endl;
+        });
+        output.close();
+    }
+
+    // Resistor-Capacitor, explicit euler.
+    {
+        double tend = 4/10.0;
+        int steps = 1000;
+        Vector<double> y { 0, 0 };
+        auto rhs = make_shared<ResistorCapacitor>();
+
+        ofstream output;
+        output.open ("explicit_rc.csv");
+        output << "t,y[0],y[1]\n";
+        SolveODE_EE(tend, steps, y, rhs, [&output](double t, VectorView<double> y) {
+            output << "" << t << "," << y(0) << "," << y(1) << std::endl;
+        });
+        output.close();
+    }
+
+    // Resistor-Capacitor, crank nicolson.
+    {
+        double tend = 4/10.0;
+        int steps = 1000;
+        Vector<double> y { 0, 0 };
+        auto rhs = make_shared<ResistorCapacitor>();
+
+        ofstream output;
+        output.open ("crank_nicolson_rc.csv");
+        output << "t,y[0],y[1]\n";
+        SolveODE_EE(tend, steps, y, rhs, [&output](double t, VectorView<double> y) {
             output << "" << t << "," << y(0) << "," << y(1) << std::endl;
         });
         output.close();
