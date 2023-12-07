@@ -179,6 +179,79 @@ namespace pep::ode {
         dx = v;
         ddx = a;
     }
+
+    // implicit Euler method for dy/dt = rhs(y)
+    void SolveODE_RK(
+        double tend, 
+        int steps,
+        Matrix<double, ColMajor> a, 
+        Vector<double> b, 
+        Vector<double> c,
+        VectorView<double> y, 
+        shared_ptr<NonlinearFunction> rhs,
+        std::function<void(double,VectorView<double>)> callback = nullptr
+    ) {
+        double dt = tend/steps;
+        int s = c.Size();
+        int n = y.Size();
+
+        /*
+        auto multiple_rhs = make_shared<MultipleFunc>(rhs, s);
+        Vector<> my(s*y.Size());
+        Vector<> mf(s*y.Size());  
+        auto myold = make_shared<ConstantFunction>(my);
+        auto mynew = make_shared<IdentityFunction>(s*n);
+        auto equ = mynew-myold - dt * Compose(make_shared<MatVecFunc>(a, n), multiple_rhs);
+                    
+
+        double t = 0;
+        for (int i = 0; i < steps; i++)
+        {
+        cout << "step " << i << endl;
+        for (int j = 0; j < s; j++)
+        my.Range(j*n, (j+1)*n) = y;
+        myold->Set(my);
+
+        NewtonSolver (equ, my);
+
+        multiple_rhs->Evaluate(my, mf);
+        for (int j = 0; j < s; j++)
+        y += dt * b(j) * mf.Range(j*n, (j+1)*n);
+
+        t += dt;
+        if (callback) callback(t, y);
+        }
+        */
+
+        // steps = 2;
+        auto multiple_rhs = make_shared<BlockFunc>(rhs, s);
+        Vector<double> mk(s*y.Size());
+        Vector<double> my(s*y.Size());    
+        auto myold = make_shared<ConstantFunction>(my);
+        auto knew = make_shared<IdentityFunction>(s*n);
+        auto equ = knew - Compose(multiple_rhs, myold+dt*make_shared<BlockMatVecFunc>(a, n));
+
+        double t = 0;
+        for (int i = 0; i < steps; i++) {
+            // cout << "step " << i << endl;
+            for (int j = 0; j < s; j++) {
+                my.Range(j*n, (j+1)*n) = y;
+            }
+            myold->Set(my);
+
+            mk = 0.0;
+            NewtonSolver(equ, mk);
+
+            for (int j = 0; j < s; j++) {
+                y += dt * b(j) * mk.Range(j*n, (j+1)*n);
+            }
+
+            t += dt;
+            if (callback) {
+                callback(t, y);
+            }
+        }
+    }
 }
 
 #endif

@@ -58,7 +58,7 @@ int main() {
     // Mass-Spring, implicit euler.
     {
         double tend = 4*M_PI;
-        int steps = 50;
+        int steps = 200;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
@@ -74,7 +74,7 @@ int main() {
     // Mass-Spring, explicit euler.
     {
         double tend = 4*M_PI;
-        int steps = 50;
+        int steps = 200;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
@@ -90,7 +90,7 @@ int main() {
     // Mass-Spring, crank nicolson.
     {
         double tend = 4*M_PI;
-        int steps = 50;
+        int steps = 200;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
@@ -98,6 +98,44 @@ int main() {
         output.open ("crank_nicolson_mass_spring.csv");
         output << "t,y[0],y[1]\n";
         SolveODE_CN(tend, steps, y, rhs, [&output](double t, VectorView<double> y) {
+            output << "" << t << "," << y(0) << "," << y(1) << std::endl;
+        });
+        output.close();
+    }
+
+    // Mass-Spring, runge kutta.
+    {
+        // Matrix<double, ColMajor> a {
+        //     { 0.0, 0.0, 0.0, 0.0 }, 
+        //     { 0.5, 0.0, 0.0, 0.0 }, 
+        //     { 0.0, 0.5, 0.0, 0.0 }, 
+        //     { 0.0, 0.0, 1.0, 0.0 }, 
+        // };
+        // a = a.Transpose();
+        // Vector<double> b { 1/6.0, 1/3.0, 1/3.0, 1/6.0 };
+        // Vector<double> c { 0.0, 0.5, 0.5, 1.0 }; 
+        Matrix<double, ColMajor> a {
+            { 0.25, 0.25 - sqrt(3)/6 },
+            { 0.25 + sqrt(3)/6, 0.25 },
+        };
+        Vector<double> b { 0.5, 0.5 };
+        Vector<double> c { 0.5 - sqrt(3)/6, 0.5 + sqrt(3)/6 };
+        // Matrix<double, ColMajor> a {
+        //     { 5.0/12.0, -1.0/12.0 },
+        //     { 3.0/4.0, 1.0/4.0 },
+        // };
+        // Vector<double> b { 0.75, 0.25 };
+        // Vector<double> c { 1.0/3.0, 1.0 };
+
+        double tend = 4*M_PI;
+        int steps = 20;
+        Vector<double> y { 1, 0 };
+        auto rhs = make_shared<MassSpring>();
+
+        ofstream output;
+        output.open ("rk_mass_spring.csv");
+        output << "t,y[0],y[1]\n";
+        SolveODE_RK(tend, steps, a, b, c, y, rhs, [&output](double t, VectorView<double> y) {
             output << "" << t << "," << y(0) << "," << y(1) << std::endl;
         });
         output.close();

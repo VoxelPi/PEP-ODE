@@ -19,12 +19,7 @@ namespace pep::ode {
 
         for (int i = 0; i < maxsteps; i++) {
             func->Evaluate(x, res);
-            // cout << "|res| = " << L2Norm(res) << endl;
             func->EvaluateDeriv(x, fprime);
-
-            // fprime =  pep::bla::LapackLU(fprime).Inverse();
-            // std::cout << "    df^-1 = " << fprime << std::endl;
-            // x -= fprime*res;
 
             // Compute df'^-1 * f(x)
             correction = res;

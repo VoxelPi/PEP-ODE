@@ -243,6 +243,67 @@ namespace pep::ode {
             df.Diag().Range(first, next) = 1;
         }
     };
+
+     class BlockFunc : public NonlinearFunction {
+        shared_ptr<NonlinearFunction> func;
+        size_t num, fdimx, fdimf;
+        public:
+        BlockFunc (shared_ptr<NonlinearFunction> _func, int _num) : func(_func), num(_num) {
+            fdimx = func->DimX();
+            fdimf = func->DimF();
+        }
+
+        virtual size_t DimX() const {
+            return num * fdimx;
+        }
+
+        virtual size_t DimF() const {
+            return num * fdimf;
+        }
+
+        virtual void Evaluate (VectorView<double> x, VectorView<double> f) const {
+            for (size_t i = 0; i < num; i++) {                
+                func->Evaluate(x.Range(i*fdimx, (i+1)*fdimx), f.Range(i*fdimf, (i+1)*fdimf));
+            }
+        }
+
+        virtual void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const {
+            df = 0.0;
+            for (size_t i = 0; i < num; i++) {
+                func->EvaluateDeriv(x.Range(i*fdimx, (i+1)*fdimx), df.Rows(i*fdimf, (i+1)*fdimf).Cols(i*fdimx, (i+1)*fdimx));   
+            }
+        }
+    };
+
+    class BlockMatVecFunc : public NonlinearFunction {
+        Matrix<double, ColMajor> a;
+        size_t n;
+        public:
+        BlockMatVecFunc (Matrix<double, ColMajor> _a, size_t _n) : a(_a), n(_n) { }
+
+        virtual size_t DimX() const {
+            return n * a.Rows();
+        } 
+
+        virtual size_t DimF() const {
+            return n * a.Cols();
+        }
+
+        virtual void Evaluate (VectorView<double> x, VectorView<double> f) const {
+            MatrixView<double, ColMajor> mx(a.Cols(), n, n, x.Data());
+            MatrixView<double, ColMajor> mf(a.Rows(), n, n, f.Data());
+            mf = mx * a.Transpose();
+        }
+
+        virtual void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const {
+            df = 0.0;
+            for (size_t i = 0; i < a.Rows(); i++) {
+                for (size_t j = 0; j < a.Cols(); j++) {
+                    df.Rows(i*n, (i+1)*n).Cols(j*n, (j+1)*n).Diag() = a(i,j);
+                }
+            }
+        }
+    };
 }
 
 #endif
