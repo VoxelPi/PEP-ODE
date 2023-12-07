@@ -30,8 +30,8 @@ class MassSpring : public NonlinearFunction {
 
 class ResistorCapacitor : public NonlinearFunction {
     public:
-    double R = 1e3; // Ohm
-    double C = 1e-7; // Farad
+    double R = 1; // Ohm
+    double C = 1e-3; // Farad
 
     size_t DimX() const override {
         return 2;
@@ -43,14 +43,14 @@ class ResistorCapacitor : public NonlinearFunction {
     
     void Evaluate (VectorView<double> x, VectorView<double> f) const override {
         f(0) = 1;
-        f(1) = (std::cos(100.0 * M_PI * x(0)) - x(1)) / (R * C);
+        f(1) = (std::cos(10.0 * M_PI * x(0)) - x(1)) / (R * C);
     }
     
     void EvaluateDeriv (VectorView<double> x, MatrixView<double, ColMajor> df) const override {
         df = 0.0;
         df(0, 0) = 0;
         df(1, 1) = -1/(R*C);
-        df(1, 0) = -1/(R*C) * 100 * M_PI * sin(100*M_PI*x(0));
+        df(1, 0) = -1/(R*C) * 10 * M_PI * sin(10*M_PI*x(0));
     }
 };
 
@@ -106,7 +106,7 @@ int main() {
     // Resistor-Capacitor, implicit euler.
     {
         double tend = 4/10.0;
-        int steps = 1000;
+        int steps = 100;
         Vector<double> y { 0, 0 };
         auto rhs = make_shared<ResistorCapacitor>();
 
@@ -138,7 +138,7 @@ int main() {
     // Resistor-Capacitor, crank nicolson.
     {
         double tend = 4/10.0;
-        int steps = 1000;
+        int steps = 250;
         Vector<double> y { 0, 0 };
         auto rhs = make_shared<ResistorCapacitor>();
 
