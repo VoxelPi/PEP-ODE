@@ -9,6 +9,27 @@
 
 namespace pep::ode {
     
+    void SolveODE_EE(
+        double t_end,
+        int steps,
+        VectorView<double> y,
+        shared_ptr<NonlinearFunction> rhs,
+        std::function<void(double, VectorView<double>)> callback = nullptr
+    ) {
+        double dt = t_end / steps;
+        Vector<double> res(y.Size());
+
+        double t = 0;
+        for (int i = 0; i < steps; ++i) {
+            t += dt;
+            rhs->Evaluate(y, res);
+            y += dt * res;
+            if (callback) {
+                callback(t, y);
+            }
+        }
+    }
+
     // implicit Euler method for dy/dt = rhs(y)
     void SolveODE_IE(
         double tend, 

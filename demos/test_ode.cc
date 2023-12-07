@@ -43,4 +43,18 @@ int main() {
         output.close();
     }
 
+    {
+        double tend = 4*M_PI;
+        int steps = 100;
+        Vector<double> y { 1, 0 };
+        auto rhs = make_shared<MassSpring>();
+
+        ofstream output;
+        output.open ("explicit_mass_spring.csv");
+        output << "t,y[0],y[1]\n";
+        SolveODE_EE(tend, steps, y, rhs, [&output](double t, VectorView<double> y) {
+            output << "" << t << "," << y(0) << "," << y(1) << std::endl;
+        });
+        output.close();
+    }
 }
