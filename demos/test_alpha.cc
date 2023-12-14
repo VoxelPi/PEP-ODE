@@ -38,7 +38,7 @@ class dLagrange : public NonlinearFunction
 
 int main()
 {
-  double tend = 50*2*M_PI;
+  double tend = 10*2*M_PI;
   double steps = 1000;
   Vector<double> x { 1, 0, 0, };
   Vector<double> dx { 0, 0, 0 };
@@ -48,6 +48,6 @@ int main()
   
   SolveODE_Alpha (tend, steps, 0.8, x, dx, ddx, rhs, mass, 
                    // [](double t, VectorView<double> x) { cout << "t = " << t << ", x = " << x(0) << " " << x(1) << " " << x(2) << endl; }
-                   [](double t, VectorView<double> x) { cout << t << " " << x(0) << " " << x(1) << " " << x(2) << endl; }                   
+                   [](double t, VectorView<double> x) { cout << t << "," << x(0) << "," << x(1) << "," << x(2) << endl; }                   
                    );
 }
