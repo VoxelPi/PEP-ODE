@@ -1,5 +1,8 @@
+find_package(LAPACK REQUIRED)
+
 add_executable (test_mass_spring mass_spring.cc)
-target_link_libraries (test_mass_spring PUBLIC ngbla)
+target_link_libraries (test_mass_spring PUBLIC ${LAPACK_LIBRARIES})
+# target_link_libraries (test_mass_spring PUBLIC ngbla)
 
 
 
@@ -14,4 +17,5 @@ list(APPEND CMAKE_PREFIX_PATH "${PYBIND11_DIR}")
 find_package(pybind11 CONFIG REQUIRED)
 
 pybind11_add_module(mass_spring bind_mass_spring.cc)
-target_link_libraries (mass_spring PUBLIC ngbla)
+target_link_libraries (mass_spring PUBLIC ${LAPACK_LIBRARIES})
+# target_link_libraries (mass_spring PUBLIC ngbla)
