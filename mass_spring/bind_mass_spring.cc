@@ -92,9 +92,9 @@ PYBIND11_MODULE(mass_spring, m) {
       })
       
       .def("GetState", [] (MassSpringSystem<3> & mss) {
-        Vector<> x(3*mss.Masses().size());
-        Vector<> dx(3*mss.Masses().size());
-        Vector<> ddx(3*mss.Masses().size());
+        Vector<double> x(3*mss.Masses().size());
+        Vector<double> dx(3*mss.Masses().size());
+        Vector<double> ddx(3*mss.Masses().size());
         mss.GetState (x, dx, ddx);
         return x;
       })
@@ -102,9 +102,9 @@ PYBIND11_MODULE(mass_spring, m) {
     
 
     m.def("Simulate", [](MassSpringSystem<3> & mss, double tend, size_t steps) {
-      Vector<> x(3*mss.Masses().size());
-      Vector<> dx(3*mss.Masses().size());
-      Vector<> ddx(3*mss.Masses().size());
+      Vector<double> x(3*mss.Masses().size());
+      Vector<double> dx(3*mss.Masses().size());
+      Vector<double> ddx(3*mss.Masses().size());
       mss.GetState (x, dx, ddx);
       
       auto mss_func = make_shared<MSS_Function<3>> (mss);

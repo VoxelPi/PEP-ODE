@@ -58,13 +58,14 @@ int main() {
     // Mass-Spring, implicit euler.
     {
         double tend = 4*M_PI;
-        int steps = 200;
+        int steps = 20;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
         ofstream output;
         output.open ("implicit_mass_spring.csv");
         output << "t,y[0],y[1]\n";
+        output << "" << 0.0 << "," << y(0) << "," << y(1) << std::endl;
         SolveODE_IE(tend, steps, y, rhs, [&output](double t, VectorView<double> y) {
             output << "" << t << "," << y(0) << "," << y(1) << std::endl;
         });
@@ -74,13 +75,14 @@ int main() {
     // Mass-Spring, explicit euler.
     {
         double tend = 4*M_PI;
-        int steps = 200;
+        int steps = 20;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
         ofstream output;
         output.open ("explicit_mass_spring.csv");
         output << "t,y[0],y[1]\n";
+        output << "" << 0.0 << "," << y(0) << "," << y(1) << std::endl;
         SolveODE_EE(tend, steps, y, rhs, [&output](double t, VectorView<double> y) {
             output << "" << t << "," << y(0) << "," << y(1) << std::endl;
         });
@@ -90,13 +92,14 @@ int main() {
     // Mass-Spring, crank nicolson.
     {
         double tend = 4*M_PI;
-        int steps = 200;
+        int steps = 20;
         Vector<double> y { 1, 0 };
         auto rhs = make_shared<MassSpring>();
 
         ofstream output;
         output.open ("crank_nicolson_mass_spring.csv");
         output << "t,y[0],y[1]\n";
+        output << "" << 0.0 << "," << y(0) << "," << y(1) << std::endl;
         SolveODE_CN(tend, steps, y, rhs, [&output](double t, VectorView<double> y) {
             output << "" << t << "," << y(0) << "," << y(1) << std::endl;
         });
@@ -135,6 +138,7 @@ int main() {
         ofstream output;
         output.open ("rk_mass_spring.csv");
         output << "t,y[0],y[1]\n";
+        output << "" << 0.0 << "," << y(0) << "," << y(1) << std::endl;
         SolveODE_RK(tend, steps, a, b, c, y, rhs, [&output](double t, VectorView<double> y) {
             output << "" << t << "," << y(0) << "," << y(1) << std::endl;
         });

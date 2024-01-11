@@ -17,9 +17,9 @@ int main()
   double tend = 10;
   double steps = 1000;
   
-  Vector<> x(2*mss.Masses().size());
-  Vector<> dx(2*mss.Masses().size());  
-  Vector<> ddx(2*mss.Masses().size());  
+  Vector<double> x(2*mss.Masses().size());
+  Vector<double> dx(2*mss.Masses().size());  
+  Vector<double> ddx(2*mss.Masses().size());  
 
   auto mss_func = make_shared<MSS_Function<2>> (mss);
   auto mass = make_shared<IdentityFunction> (x.Size());      
