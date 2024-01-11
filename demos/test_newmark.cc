@@ -23,13 +23,21 @@ class RHS : public NonlinearFunction
 
 int main()
 {
-  double tend = 2*M_PI;
-  int steps = 100;
+  double tend = 10*M_PI;
+  int steps = 1000;
   Vector<double> x { 1, };
   Vector<double> dx { 0. };
   auto rhs = make_shared<RHS>();
   auto mass = make_shared<IdentityFunction>(1);
-  SolveODE_Newmark(tend, steps, x, dx, rhs, mass,
-                   [](double t, VectorView<double> x) { cout << "t = " << t << ", x = " << x(0) << endl; }
-                   );
+  ofstream output;
+  output.open ("mass_pendulum_newmark.csv");
+  output << "t,x[0],x[1],x[2]\n";
+
+  SolveODE_Newmark(
+    tend, steps, x, dx, rhs, mass,
+    [&output](double t, VectorView<double> x) {
+      output << "" << t << "," << x(0) << std::endl;
+    } 
+      );
+  output.close();
 }
