@@ -1,5 +1,7 @@
 #include <nonlinfunc.h>
 #include <ode.h>
+#include <iostream>
+#include <fstream>
 
 using namespace pep::ode;
 
